@@ -258,7 +258,7 @@ class ApiServices {
     return data;
   }
 
-  async checkout(cartId: string) {
+  async checkout(cartId: string,token:string) {
     return await fetch(
       this.#BASE_URL +
         "/api/v1/orders/checkout-session/" +
@@ -266,7 +266,9 @@ class ApiServices {
         `?url=${process.env.NEXT_PUBLIC_BASE_URL}`,
       {
         method: "post",
-        headers: this.#getHeaders(),
+        headers:{  "content-type": "application/json",
+      ...(token && { token })
+  },
         body: JSON.stringify({
           shippingAddress: {
             details: "details",

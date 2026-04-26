@@ -127,13 +127,34 @@ async function clearCart() {
     toast.success(response.message)
 
   }
-  async function handleCheckout() {
-    setCheckoutLoading(true)
-    const response= await apiServices.checkout(cart.cartId)
-    setCheckoutLoading(false)
-    location.href=response.session.url;
+  // async function handleCheckout() {
+  //   setCheckoutLoading(true)
+  //   const response= await apiServices.checkout(cart.cartId,token)
+  //   setCheckoutLoading(false)
+  //   location.href=response.session.url;
+  // }
+async function handleCheckout() {
+  if (!token) {
+    toast.error("Please log in first");
+    return;
   }
 
+  try {
+    setCheckoutLoading(true);
+
+    const response = await apiServices.checkout(
+      cart.cartId,
+      token
+    );
+
+    window.location.href = response.session.url;
+
+  } catch (error) {
+    toast.error("Checkout failed");
+  } finally {
+    setCheckoutLoading(false);
+  }
+}
   if (innerCart.numOfCartItems === 0) {
     return (
       <section className="py-32 mx-auto">
