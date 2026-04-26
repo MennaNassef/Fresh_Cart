@@ -54,7 +54,7 @@ const DEFAULT_ITEMS: CartItem[] = [
   },
 ];
 
-const ShoppingCart2 = ({cart }: {cart: ICartResponse}) => {
+const ShoppingCart2 = ({cart ,token}: {cart: ICartResponse,token?:string}) => {
   const [innerCart,setInnerCart] =useState<ICartResponse>(cart)
   const [isClearing,setIsClearing] =useState(false)
   const [checkoutLoading,setCheckoutLoading] =useState(false)
@@ -66,22 +66,61 @@ const ShoppingCart2 = ({cart }: {cart: ICartResponse}) => {
   },[innerCart])
 
   console.log(innerCart)
-  async function removeItem(productId:string){
-    const response =await apiServices.removeProductFromCart(productId)
-    // setIsLoading(true )
-    setInnerCart(response);
-    // setIsLoading(false)
-    toast.success("Items Cleared From Cart Successfully")
+  // async function removeItem(productId:string){
+  //   const response =await apiServices.removeProductFromCart(productId,token)
+  //   // setIsLoading(true )
+  //   setInnerCart(response);
+  //   // setIsLoading(false)
+  //   toast.success("Items Cleared From Cart Successfully")
 
-  }
-  async function clearCart(){
-    setIsClearing(true)
-    const response =await apiServices.clearCart()
-    setInnerCart(response)
-    setIsClearing(false)
-    toast.success("Cart Cleared Successfully")
+  // }
+  // async function clearCart(){
+  //   setIsClearing(true)
+  //   const response =await apiServices.clearCart(token)
+  //   setInnerCart(response)
+  //   setIsClearing(false)
+  //   toast.success("Cart Cleared Successfully")
 
+  // }
+  async function removeItem(productId: string) {
+  if (!token) {
+    toast.error("Please log in first");
+    return;
   }
+
+  try {
+    const response = await apiServices.removeProductFromCart(
+      productId,
+      token
+    );
+
+    setInnerCart(response.data.products); 
+
+    toast.success("Item removed from cart successfully");
+  } catch (error) {
+    toast.error("Failed to remove item");
+  }
+}
+async function clearCart() {
+  if (!token) {
+    toast.error("Please log in first");
+    return;
+  }
+
+  try {
+    setIsClearing(true);
+
+    const response = await apiServices.clearCart(token);
+
+    setInnerCart([]); 
+    toast.success("Cart cleared successfully");
+
+  } catch (error) {
+    toast.error("Failed to clear cart");
+  } finally {
+    setIsClearing(false);
+  }
+}
   async function updateProductCount(productId:string,count:number){
     const response=await apiServices.updateProductCount(productId,count)
     setInnerCart(response)

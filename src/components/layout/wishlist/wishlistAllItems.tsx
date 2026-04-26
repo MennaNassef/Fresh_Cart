@@ -9,21 +9,38 @@ import apiServices from '@/app/services/api';
 import WishlistEmpty from "@/components/layout/wishlist/WishlistEmpty";
 import { IWishlistResponse } from '@/interfaces/IWishlistResponse';
 
-export default function WishlistAllItems({wishlist}:{ wishlist: IWishlist[]}) {
+export default function WishlistAllItems({wishlist,token}:{ wishlist: IWishlist[],token?:string}) {
   
   const [innerCart, setInnerCart] = useState<IWishlist[]>(wishlist || [])
   console.log(innerCart)
     useEffect(() => {
     setInnerCart(wishlist);
   }, [wishlist]);
-  async function removeItem(productId:string){
-      const response =await apiServices.removeProductFromWishlist(productId)
-      setInnerCart(prevItems => 
-        prevItems.filter(item => item._id !== productId)
-      );
-      toast.success("Item removed from wishlist")
+//   async function removeItem(productId:string){
+//       const response =await apiServices.removeProductFromWishlist(productId,token)
+//       setInnerCart(prevItems => 
+//         prevItems.filter(item => item._id !== productId)
+//       );
+//       toast.success("Item removed from wishlist")
   
-    }
+//     }
+async function removeItem(productId: string) {
+  if (!token) {
+    toast.error("Please log in first");
+    return;
+  }
+
+  const response = await apiServices.removeProductFromWishlist(
+    productId,
+    token
+  );
+
+  setInnerCart(prev =>
+    prev.filter(item => item._id !== productId)
+  );
+
+  toast.success("Item removed from wishlist");
+}
     console.log(wishlist)
     if(innerCart.length===0){
         return <WishlistEmpty/>

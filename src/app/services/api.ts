@@ -211,12 +211,14 @@ class ApiServices {
     return data;
   }
 
-  async removeProductFromCart(productId: string): Promise<ICartResponse> {
+  async removeProductFromCart(productId: string,token:string): Promise<ICartResponse> {
     const response = await fetch(
       this.#BASE_URL + "/api/v2/cart/" + productId,
       {
         method: "delete",
-        headers: this.#getHeaders(),
+        headers:{  "content-type": "application/json",
+      ...(token && { token })
+    }
       }
     );
 
@@ -225,10 +227,12 @@ class ApiServices {
     return data;
   }
 
-  async clearCart(): Promise<any> {
+  async clearCart(token:string): Promise<any> {
     const response = await fetch(this.#BASE_URL + "/api/v2/cart/", {
       method: "delete",
-      headers: this.#getHeaders(),
+      headers:{  "content-type": "application/json",
+      ...(token && { token })
+    }
     });
 
     const data = await response.json();
@@ -365,11 +369,12 @@ class ApiServices {
     console.log(data)
     return data.data;
   }
-  async removeProductFromWishlist(productId:string): Promise<IWishlistResponse>  {
+  async removeProductFromWishlist(productId:string,token?:string): Promise<IWishlistResponse>  {
     const response = await fetch(this.#BASE_URL + "/api/v1/wishlist/"+productId ,{
       method: "delete",
-      headers: this.#getHeaders(),
-    });
+      headers:{  "content-type": "application/json",
+      ...(token && { token })
+    }});
 
     const data = await response.json();
     console.log(data)

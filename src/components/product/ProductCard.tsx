@@ -156,26 +156,6 @@ const handleAddToCart = async () => {
     });
   }
 }
-//   async function addToWishlist(productId: string) {
-//   try {
-//     setIsWishlisted(true); // optimistic UI
-
-//     const adddWishlistItem=await apiServices.addProductToWishlist(productId,token||undefined)
-//     console.log(adddWishlistItem)
-//     toast.success(adddWishlistItem.message, {
-//       style:{
-//         color:'green'
-//       }
-//         });
-//   } catch (error) {
-//     setIsWishlisted(false); 
-//     toast.success("Failed to add to wishlist", {
-//       style:{
-//         color:'red'
-//       }
-//         });
-//   }
-// }
   return (
     <Card className="w-full max-w-sm overflow-hidden group bg-backgrou text-foreground shadow-xl hover:shadow-lg transition-all duration-300 rounded-md">
       {/* Image carousel */}

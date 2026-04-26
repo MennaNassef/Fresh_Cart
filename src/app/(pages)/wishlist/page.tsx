@@ -23,9 +23,9 @@ export default async function WishlistPage() {
   const decodedToken=await decode({token:myToken ,secret:process.env.NEXTAUTH_SECRET!})
   console.log(decodedToken)
   if(decodedToken){
-    const wishlist = await apiServices.getUserWishlist(decodedToken.token);
+    const wishlist = await apiServices.getUserWishlist(decodedToken?.token);
     console.log(wishlist)
-    return <WishlistAllItems wishlist={wishlist}/>
+    return <WishlistAllItems wishlist={wishlist} token={decodedToken?.token}/>
     
   }
   return (

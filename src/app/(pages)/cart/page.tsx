@@ -23,7 +23,7 @@ export default async function Cart() {
       const cart=await apiServices.getCart(decodedToken.token)
       console.log(cart);
       return (
-      <ShoppingCart2 cart={cart}/>
+      <ShoppingCart2 cart={cart} token={decodedToken?.token}/>
   )}
     
   
