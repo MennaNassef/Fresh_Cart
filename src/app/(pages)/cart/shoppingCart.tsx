@@ -94,7 +94,7 @@ const ShoppingCart2 = ({cart ,token}: {cart: ICartResponse,token?:string}) => {
       token
     );
 
-    setInnerCart(response.data.products); 
+    setInnerCart(response); 
 
     toast.success("Item removed from cart successfully");
   } catch (error) {
@@ -112,7 +112,7 @@ async function clearCart() {
 
     const response = await apiServices.clearCart(token);
 
-    setInnerCart([]); 
+    setInnerCart(response); 
     toast.success("Cart cleared successfully");
 
   } catch (error) {
