@@ -183,13 +183,15 @@ class ApiServices {
     return data.data;
   }
 
-  async addProductToCart(productId: string): Promise<ICartResponse> {
+  async addProductToCart(productId: string,token?:string): Promise<ICartResponse> {
     const response = await fetch(this.#BASE_URL + "/api/v2/cart", {
       method: "post",
       body: JSON.stringify({
         productId,
       }),
-      headers: this.#getHeaders(),
+      headers:{  "content-type": "application/json",
+      ...(token && { token })
+  }
     });
 
     const data = await response.json();
@@ -336,13 +338,15 @@ class ApiServices {
     return [];
   }
   }
-  async addProductToWishlist(productId: string): Promise<IWishlistResponse> {
+  async addProductToWishlist(productId: string,token?:string): Promise<IWishlistResponse> {
     const response = await fetch(this.#BASE_URL + "/api/v1/wishlist/", {
       method: "post",
       body: JSON.stringify({
         productId,
       }),
-      headers: this.#getHeaders(),
+      headers:{  "content-type": "application/json",
+      ...(token && { token })
+  }
     });
 
     const data = await response.json();

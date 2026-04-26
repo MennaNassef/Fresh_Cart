@@ -35,7 +35,7 @@ export interface ProductCardProps {
   discount?: number;
   freeShipping?: boolean;
   id:string;
-  
+  token?:string
 }
 
 export function ProductCard({
@@ -52,6 +52,7 @@ export function ProductCard({
   discount = 30,
   freeShipping = true,
   id,
+  token
 }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
@@ -71,42 +72,110 @@ export function ProductCard({
     e.stopPropagation();
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
+const handleAddToCart = async () => {
+  if (isAddedToCart) return;
 
-  const handleAddToCart =async () => {
-    if (isAddedToCart) return;
+  if (!token) {
+    toast.error("Please log in first");
+    return;
+  }
+
+  try {
     setIsAddingToCart(true);
-    const response=await apiServices.addProductToCart(id)
-    setCartCount(response.numOfCartItems)
+
+    const response = await apiServices.addProductToCart(
+      id,
+      token
+    );
+
+    setCartCount(response.numOfCartItems);
+
     toast.success(response.message, {
-      style:{
-        color:'green'
+      style: {
+        color: 'green'
       }
-        })
-    setIsAddingToCart(false);
+    });
+
     setIsAddedToCart(true);
     setTimeout(() => setIsAddedToCart(false), 2000);
+
+  } catch (error) {
+    toast.error("Failed to add to cart", {
+      style: {
+        color: 'red'
+      }
+    });
+  } finally {
+    setIsAddingToCart(false);
+  }
+};
+  // const handleAddToCart =async () => {
+  //   if (isAddedToCart) return;
+  //   setIsAddingToCart(true);
+  //   const response=await apiServices.addProductToCart(id,token || undefined)
+  //   setCartCount(response.numOfCartItems)
+  //   toast.success(response.message, {
+  //     style:{
+  //       color:'green'
+  //     }
+  //       })
+  //   setIsAddingToCart(false);
+  //   setIsAddedToCart(true);
+  //   setTimeout(() => setIsAddedToCart(false), 2000);
     
-  };
+  // };
   async function addToWishlist(productId: string) {
   try {
-    setIsWishlisted(true); // optimistic UI
+    if (!token) {
+      toast.error("Please log in to add items to your wishlist.");
+      return;
+    }
 
-    const adddWishlistItem=await apiServices.addProductToWishlist(productId)
-    console.log(adddWishlistItem)
-    toast.success(adddWishlistItem.message, {
-      style:{
-        color:'green'
+    setIsWishlisted(true); 
+
+    const addWishlistItem = await apiServices.addProductToWishlist(
+      productId,
+      token
+    );
+
+    console.log(addWishlistItem);
+
+    toast.success(addWishlistItem.message, {
+      style: {
+        color: 'green'
       }
-        });
+    });
+
   } catch (error) {
-    setIsWishlisted(false); 
-    toast.success("Failed to add to wishlist", {
-      style:{
-        color:'red'
+    setIsWishlisted(false);
+
+    toast.error("Failed to add to wishlist", {
+      style: {
+        color: 'red'
       }
-        });
+    });
   }
 }
+//   async function addToWishlist(productId: string) {
+//   try {
+//     setIsWishlisted(true); // optimistic UI
+
+//     const adddWishlistItem=await apiServices.addProductToWishlist(productId,token||undefined)
+//     console.log(adddWishlistItem)
+//     toast.success(adddWishlistItem.message, {
+//       style:{
+//         color:'green'
+//       }
+//         });
+//   } catch (error) {
+//     setIsWishlisted(false); 
+//     toast.success("Failed to add to wishlist", {
+//       style:{
+//         color:'red'
+//       }
+//         });
+//   }
+// }
   return (
     <Card className="w-full max-w-sm overflow-hidden group bg-backgrou text-foreground shadow-xl hover:shadow-lg transition-all duration-300 rounded-md">
       {/* Image carousel */}
